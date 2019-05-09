@@ -1,54 +1,49 @@
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
-#include "Matrix.cpp"
+#include "functions.h"
+#include <cmath>
+
+
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(600,600), "My windows");
-	
-	bool updating = false;
-	bool SpacePressed = true;
+	int p;
+	int radius = 300;
+	int noOfPoints = 500;
+	double step = M_PI*2 / noOfPoints;
+	int no = 3;
 
-	window.setFramerateLimit(0);
-
-	Matrix mat = Matrix(100,window);
-
+	sf::RenderWindow window(sf::VideoMode(800,800),"TimesCricle");
+	sf::Color lineColor = sf::Color(0,0,255,10);
+	drawPoints(window,step,radius);
+	window.setFramerateLimit(100);
 	while(window.isOpen())
 	{
 		sf::Event event;
+		
 		while(window.pollEvent(event))
 		{
 			if(event.type == sf::Event::Closed)
 			{
 				window.close();
 			}
-			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-			{
-				sf::Vector2i pos = sf::Mouse::getPosition(window);
-				mat.setGrid(pos.x,pos.y);
-			}
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && SpacePressed)
-			{
-				updating = !updating;
-				SpacePressed = false;
-			}
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			{
-				sf::Vector2i pos = sf::Mouse::getPosition(window);
-				mat.getNbrs((int)(pos.x/mat.side),(int)(pos.y/mat.side));
-			}
 		}
-
-		if(updating)
+		
+		// window.clear(sf::Color::White);
+		drawLine(window,p,lineColor,step,noOfPoints,radius,no);
+		if(p == noOfPoints)
 		{
-			mat.update();
+			p = 0;
+			no = no + 1;
+			lineColor.r = (lineColor.r + 100 )% 255;
+			lineColor.g = (lineColor.g + 50 )% 255;
+			lineColor.b = (lineColor.b + 200 )% 255;
+			lineColor.a = (lineColor.a + 3 ) % 50; 
 		}
-
-
-		SpacePressed = true;
-
-		window.clear(sf::Color::Black);
-		mat.draw(window);
+		// p = (p + 1)%100
+		p = p + 1;
 		window.display();
+	
+	
 	}
 }
